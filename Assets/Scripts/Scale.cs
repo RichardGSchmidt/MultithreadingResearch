@@ -8,7 +8,7 @@ using LibNoise.Operator;
 using LibNoise.Generator;
 
 /// <summary>
-/// Basic threading research from a tutorial 
+/// Basic threading research 
 /// I'm doing to learn techniques,
 /// going to use this as a stepping point to
 /// offload texture generation routines to
@@ -17,6 +17,8 @@ using LibNoise.Generator;
 /// </summary>
 
 public class Scale : MonoBehaviour {
+
+    public MeshRenderer meshRenderer;
     AutoResetEvent resetEvent;
     Transform t;
     Thread thread;
@@ -25,56 +27,62 @@ public class Scale : MonoBehaviour {
     bool stop;
     Noise2D noiseMap;
     ModuleBase baseModule;
+    Texture2D texture;
+    bool updatedNoiseMapAvailable;
+    bool threadRunning;
     
 	void Start ()
     {
         t = transform;
         latestScale = t.localScale;
+        texture = new Texture2D(400, 200);
         thread = new Thread(Run);
         thread.Start();
-        resetEvent = new AutoResetEvent(false);
-	}
+        resetEvent = new AutoResetEvent(false);   
+    }
     
 
     void Run()
     {
-        DateTime time = DateTime.Now;
         while (!stop)
         {
-
-
-            baseModule = new Perlin(1.2, 2.3, 1, 3, time.GetHashCode(), QualityMode.High);
-            noiseMap = new Noise2D(200, 200, baseModule);
-            noiseMap.GenerateSpherical(-90, 90, -180, 180);
-            var now = DateTime.Now;
-            var deltaTime = now - time;
-            time = now;
-            resetEvent.WaitOne();
-            latestScale += latestScale *(float)deltaTime.TotalSeconds* (goingDown ? -1f : 1f);
-
-
-            if ((goingDown && latestScale.magnitude < 1) || (!goingDown && latestScale.magnitude > 5))
+            while (threadRunning)
             {
-                goingDown = !goingDown;
+                DateTime time = DateTime.Now;
+                baseModule = new Perlin(2, 2.3, .5, 3, time.GetHashCode(), QualityMode.High);
+                noiseMap = new Noise2D(4000, 2000, baseModule);
+                noiseMap.GenerateSpherical(-90, 90, -180, 180);
+                updatedNoiseMapAvailable = true;
+                threadRunning = false;
             }
         }
     }
 	
 	void Update ()
     {
-        resetEvent.Set();
-        t.localScale = latestScale;
+        transform.Rotate(Vector3.down * Time.deltaTime);
+        if (updatedNoiseMapAvailable)
+        {
+            meshRenderer.sharedMaterial.mainTexture = noiseMap.GetTexture();
+            updatedNoiseMapAvailable = false;
+        }
+        else if (!threadRunning)
+        {
+            threadRunning = true;
+        }
 	}
 
     public void OnDestroy()
     {
         stop = true;
+        threadRunning = false;
         thread.Abort();
     }
 
     public void OnApplicationQuit()
     {
         stop = true;
+        threadRunning = false;
         thread.Abort();
     }
 }
