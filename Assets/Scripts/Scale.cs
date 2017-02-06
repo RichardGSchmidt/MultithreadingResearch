@@ -4,6 +4,15 @@ using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Basic threading research from a tutorial 
+/// I'm doing to learn techniques,
+/// going to use this as a stepping point to
+/// offload texture generation routines to
+/// a seperate threads for Ground Growing
+/// and Uplifting.
+/// </summary>
+
 public class Scale : MonoBehaviour {
     AutoResetEvent resetEvent;
     Transform t;
@@ -11,8 +20,7 @@ public class Scale : MonoBehaviour {
     bool goingDown;
     Vector3 latestScale;
     bool stop;
-
-	// Use this for initialization
+    
 	void Start ()
     {
         t = transform;
@@ -41,7 +49,6 @@ public class Scale : MonoBehaviour {
         }
     }
 	
-	// Update is called once per frame
 	void Update ()
     {
         resetEvent.Set();
