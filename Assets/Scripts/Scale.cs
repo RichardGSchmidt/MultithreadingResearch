@@ -3,6 +3,9 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
+using LibNoise;
+using LibNoise.Operator;
+using LibNoise.Generator;
 
 /// <summary>
 /// Basic threading research from a tutorial 
@@ -20,6 +23,8 @@ public class Scale : MonoBehaviour {
     bool goingDown;
     Vector3 latestScale;
     bool stop;
+    Noise2D noiseMap;
+    ModuleBase baseModule;
     
 	void Start ()
     {
@@ -36,11 +41,17 @@ public class Scale : MonoBehaviour {
         DateTime time = DateTime.Now;
         while (!stop)
         {
+
+
+            baseModule = new Perlin(1.2, 2.3, 1, 3, time.GetHashCode(), QualityMode.High);
+            noiseMap = new Noise2D(200, 200, baseModule);
+            noiseMap.GenerateSpherical(-90, 90, -180, 180);
             var now = DateTime.Now;
             var deltaTime = now - time;
             time = now;
             resetEvent.WaitOne();
             latestScale += latestScale *(float)deltaTime.TotalSeconds* (goingDown ? -1f : 1f);
+
 
             if ((goingDown && latestScale.magnitude < 1) || (!goingDown && latestScale.magnitude > 5))
             {
