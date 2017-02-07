@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using LibNoise;
 using UnityEngine;
 
+
+//the torus code came from wikipedia, was picked at random
+//this is mostly a demonstration of how you can deform any
+//mesh as long as you pick the right place to inject
+//the noise values.
 public class FractalTorus : MonoBehaviour {
 
 

@@ -8,12 +8,25 @@ using LibNoise.Operator;
 using LibNoise.Generator;
 
 /// <summary>
-/// Basic threading research 
-/// I'm doing to learn techniques,
-/// going to use this as a stepping point to
+/// Started as basic threading research 
+/// I was doing to learn techniques,
+/// to as a stepping point to
 /// offload texture generation routines to
 /// a seperate threads for Ground Growing
 /// and Uplifting.
+/// 
+/// Also this is a decent program to look at to understand noise injection into meshes.
+/// 
+/// Always (or most of the time anyways) look for radial adjustments to verticies and make a 
+/// heightmap adjustment there by a multiplying the vector
+/// against the heightmap value and adding the product
+/// to the source vector and place adjustments as necessary to get
+/// the desired effect magnitude
+/// 
+/// example:
+/// vertex[i] = vertex[i] + vertex[i]*moduleBase(vertex[i]);
+/// or
+/// vertex[i] *= 1+moduleBase(vertex[i]);
 /// </summary>
 
 public class Scale : MonoBehaviour {
@@ -58,7 +71,9 @@ public class Scale : MonoBehaviour {
         StartCoroutine(SpawnFractals());
 
     }
-    
+
+    #region WIP
+    //this part not implemented
     private IEnumerator SpawnFractals()
     {
         if (depth < fractalItterations)
@@ -67,6 +82,7 @@ public class Scale : MonoBehaviour {
         }
         yield return null;
     }
+    #endregion
 
     void Run()
     {
