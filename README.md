@@ -3,8 +3,6 @@ Just some research into multithreading in C# / Unity
 
 https://youtu.be/2MdPIT6EyUA
 
-This uses a combination of the LibNoise open source noise library
-and a mesh injection of a torus mesh to generate a procedural
-texture and mesh deform on an off cpu thread.
+This program demonstrates the offloading procedural texture generation and mesh deformation on a seperate cpu thread.
 
 If none of that makes sense to you, watch the video.
